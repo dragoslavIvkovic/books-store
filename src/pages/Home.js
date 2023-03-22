@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -18,10 +17,14 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { styled, useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useDispatch } from 'react-redux';
-import { getUsers } from '../components/utils/api';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
+import { delateBookById, getUsers } from '../components/utils/api';
 import { addBookState } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 600;
 
@@ -53,6 +56,7 @@ const AppBar = styled(MuiAppBar, {
   }),
   ...(open && {
     width: `calc(100% - ${drawerWidth}px)`,
+    height: '150px',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -63,12 +67,13 @@ const AppBar = styled(MuiAppBar, {
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
-  // padding: theme.spacing(0, 1),
+  alignItems: 'flex-start',
+  height: '150px',
+  padding: theme.spacing(0, 1),
   backgroundColor: 'darkblue',
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: 'flex-start',
+  justifyContent: 'flex-end'
 }));
 
 function Home() {
@@ -77,12 +82,22 @@ function Home() {
   const [sortByAuthor, setSortByAuthor] = useState('asc');
   const [sortByTitle, setSortByTitle] = useState('asc');
   const dispatch = useDispatch();
+  const bookId = useSelector((state) => state?.books?.bookId);
+  const navigate = useNavigate();
+
 
   const getUserList = async () => {
     setLoading(true);
     const usersData = await getUsers(sortByTitle, sortByAuthor);
     setUserList(usersData);
     setLoading(false);
+  };
+
+  const delateBook = async () => {
+   setLoading(true);
+   const bookData = await delateBookById(bookId);
+    getUserList();
+    setOpen(false);
   };
 
   useEffect(
@@ -123,7 +138,7 @@ function Home() {
         </Toolbar>
       </AppBar>
       <Main open={open}>
-        <DrawerHeader sx={{ backgroundColor: 'white' }}/>
+        <DrawerHeader sx={{ backgroundColor: 'white' }} />
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -194,6 +209,13 @@ function Home() {
         anchor="right"
         open={open}>
         <DrawerHeader>
+          <Button sx={{ backgroundColor: 'transparent', color: 'white' }}>
+            <EditIcon onClick={() => navigate('EditBookPage')
+            }/>
+          </Button>
+          <Button onClick={delateBook} sx={{ backgroundColor: 'transparent', color: 'white' }}>
+            <DeleteIcon />
+          </Button>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>

@@ -6,7 +6,6 @@ import { getBookById } from '../components/utils/api';
 
 function SelectedBookPage() {
   const bookId = useSelector((state) => state?.books?.bookId);
-  console.log('⬇️ bookId ⬇️', bookId);
   const [bookById, setBookById] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -14,7 +13,6 @@ function SelectedBookPage() {
     setLoading(true);
     const bookData = await getBookById(bookId);
     setBookById(bookData);
-    console.log('⬇️ bookData ⬇️', bookData);
     setLoading(false);
   };
 
