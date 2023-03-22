@@ -14,14 +14,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { styled, useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import getUsers from '../components/utils/api';
+import { useDispatch } from 'react-redux';
+import { getUsers } from '../components/utils/api';
+import { addBookState } from '../state/booksReducer';
+import SelectedBookPage from './SelectedBookPage';
 
-const drawerWidth = 240;
+const drawerWidth = 600;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -62,7 +64,8 @@ const AppBar = styled(MuiAppBar, {
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: theme.spacing(0, 1),
+  // padding: theme.spacing(0, 1),
+  backgroundColor: 'darkblue',
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: 'flex-start',
@@ -73,11 +76,11 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [sortByAuthor, setSortByAuthor] = useState('asc');
   const [sortByTitle, setSortByTitle] = useState('asc');
+  const dispatch = useDispatch();
 
   const getUserList = async () => {
     setLoading(true);
     const usersData = await getUsers(sortByTitle, sortByAuthor);
-    console.log('⬇️ userData ⬇️', usersData);
     setUserList(usersData);
     setLoading(false);
   };
@@ -111,25 +114,16 @@ function Home() {
 
   const theme = useTheme();
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', marginTop: '2rem' }}>
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div">
-            Persistent drawer
+            Books
           </Typography>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="end"
-            onClick={handleDrawerOpen}
-            sx={{ ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-          </IconButton>
         </Toolbar>
       </AppBar>
       <Main open={open}>
-        <DrawerHeader />
+        <DrawerHeader sx={{ backgroundColor: 'white' }}/>
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -156,9 +150,12 @@ function Home() {
               <TableBody>
                 {userList.map((row) => (
                   <TableRow
+                    onClick={() => {
+                      dispatch(addBookState(row.id));
+                      handleDrawerOpen();
+                    }}
                     key={row.title}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell align="right">
                       <Box
                         component="img"
@@ -166,7 +163,7 @@ function Home() {
                         alt={row.title}
                         sx={{
                           height: 100,
-                          width: 70,
+                          width: 70
                         }}
                       />
                     </TableCell>
@@ -190,20 +187,19 @@ function Home() {
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
-          },
+            width: drawerWidth
+          }
         }}
         variant="persistent"
         anchor="right"
-        open={open}
-      >
+        open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <Divider />
+        <SelectedBookPage />
       </Drawer>
     </Box>
   );
