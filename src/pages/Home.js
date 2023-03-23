@@ -26,6 +26,8 @@ import { addBookState, setMode } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+
 
 const drawerWidth = 600;
 
@@ -80,16 +82,19 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 function Home() {
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sortByAuthor, setSortByAuthor] = useState('asc');
   const [sortByTitle, setSortByTitle] = useState('asc');
   const dispatch = useDispatch();
   const bookId = useSelector((state) => state?.books?.bookId);
   const navigate = useNavigate();
-
-
+  const [selectedAuthor, setSelectedAuthor] = useState('');
+  const handleAuthorChange = (event) => {
+    setSelectedAuthor(event.target.value);
+  };
+const authorFilter = [...new Set(userList.map((user) => user.nameOfAuthor))];
+console.log(`⬇️ selectedAuthor,sortByTitle,userList ⬇️`, selectedAuthor, sortByTitle, userList);
   const getUserList = async () => {
     setLoading(true);
-    const usersData = await getUsers(sortByTitle, sortByAuthor);
+    const usersData = await getUsers(selectedAuthor);
     setUserList(usersData);
     setLoading(false);
   };
@@ -101,18 +106,10 @@ function Home() {
     setOpen(false);
   };
 
-  useEffect(
-    () => {
-      getUserList();
-    },
-    [
-      sortByAuthor,
-      sortByTitle],
-  );
+  useEffect(() => {
+    getUserList();
+  }, [selectedAuthor, sortByTitle]);
 
-  const sortByAuthorFn = () => {
-    setSortByAuthor(sortByAuthor === 'asc' ? 'desc' : 'asc');
-  };
 
   const setSortByTitleFn = () => {
     setSortByTitle(sortByTitle === 'asc' ? 'desc' : 'asc');
@@ -143,16 +140,28 @@ function Home() {
       </AppBar>
       <Main open={open}>
         <DrawerHeader sx={{ backgroundColor: 'white' }} />
+        <FormControl>
+          <InputLabel id="author-select-label">Author</InputLabel>
+          <Select
+            labelId="author-select-label"
+            id="author-select"
+            value={selectedAuthor}
+            onChange={handleAuthorChange}>
+            <MenuItem value="">All</MenuItem>
+            {authorFilter.map((author) => (
+              <MenuItem key={author} value={author}>
+                {author}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         {loading ? (
           <p>Loading...</p>
         ) : (
           <TableContainer component={Paper}>
             <div>
-              <button onClick={sortByAuthorFn} type="button">
-                sortByAuthorFn
-              </button>
               <button onClick={setSortByTitleFn} type="button">
-                setSortByTitleFn
+                SORT BY Title{' '}
               </button>
             </div>
             <Table aria-label="simple table">
@@ -168,34 +177,34 @@ function Home() {
               </TableHead>
               <TableBody>
                 {userList.map((row) => (
-                  <TableRow
-                    onClick={() => {
-                      dispatch(addBookState(row.id));
-                      handleDrawerOpen();
-                    }}
-                    key={row.id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell align="right">
-                      <Box
-                        component="img"
-                        src={row.coverPhoto}
-                        alt={row.title}
-                        sx={{
-                          height: 100,
-                          width: 70
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="right">{row.title}</TableCell>
-                    <TableCell align="right">{row.nameOfAuthor}</TableCell>
-                    <TableCell align="right">{row.yearOfBublishing}</TableCell>
-                    <TableCell align="right">{row.numOfPages}</TableCell>
-                    <TableCell align="right">{row.quantity}</TableCell>
-                    <TableCell align="right">
-                      <MoreVertIcon />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                    <TableRow
+                      onClick={() => {
+                        dispatch(addBookState(row.id));
+                        handleDrawerOpen();
+                      }}
+                      key={row.id}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                      <TableCell align="right">
+                        <Box
+                          component="img"
+                          src={row.coverPhoto}
+                          alt={row.title}
+                          sx={{
+                            height: 100,
+                            width: 70
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align="right">{row.title}</TableCell>
+                      <TableCell align="right">{row.nameOfAuthor}</TableCell>
+                      <TableCell align="right">{row.yearOfBublishing}</TableCell>
+                      <TableCell align="right">{row.numOfPages}</TableCell>
+                      <TableCell align="right">{row.quantity}</TableCell>
+                      <TableCell align="right">
+                        <MoreVertIcon />
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
