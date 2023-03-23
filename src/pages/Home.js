@@ -24,9 +24,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { delateBookById, getUsers } from '../components/utils/api';
 import { addBookState, setMode } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
-import { Button } from '@mui/material';
+import { Button, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+
 
 
 const drawerWidth = 600;
@@ -80,6 +81,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 function Home() {
+  const [page, setPage] = React.useState(0);
+  const [sortByPages, setSortByPages] = useState('asc');
+
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortByTitle, setSortByTitle] = useState('asc');
@@ -90,14 +95,19 @@ function Home() {
   const handleAuthorChange = (event) => {
     setSelectedAuthor(event.target.value);
   };
-const authorFilter = [...new Set(userList.map((user) => user.nameOfAuthor))];
-console.log(`⬇️ selectedAuthor,sortByTitle,userList ⬇️`, selectedAuthor, sortByTitle, userList);
-  const getUserList = async () => {
-    setLoading(true);
-    const usersData = await getUsers(selectedAuthor);
-    setUserList(usersData);
-    setLoading(false);
-  };
+  const authorFilter = [...new Set(userList.map((user) => user.nameOfAuthor))];
+  
+ const getUserList = async () => {
+   setLoading(true);
+   const usersData = await getUsers(selectedAuthor, sortByTitle);
+   const sortedUsers =
+     sortByPages === 'asc'
+       ? usersData.sort((a, b) => a.numOfPages - b.numOfPages)
+       : usersData.sort((a, b) => b.numOfPages - a.numOfPages);
+   setUserList(sortedUsers);
+   console.log(`⬇️ sortedUsers ⬇️`, sortedUsers, usersData, usersData);
+   setLoading(false);
+ };
 
   const delateBook = async () => {
    setLoading(true);
@@ -108,13 +118,17 @@ console.log(`⬇️ selectedAuthor,sortByTitle,userList ⬇️`, selectedAuthor,
 
   useEffect(() => {
     getUserList();
-  }, [selectedAuthor, sortByTitle]);
+  }, [selectedAuthor, sortByTitle, sortByPages]);
 
 
   const setSortByTitleFn = () => {
     setSortByTitle(sortByTitle === 'asc' ? 'desc' : 'asc');
   };
 
+
+  const setSortByPagesFn = () => {
+    setSortByPages(sortByPages === 'asc' ? 'desc' : 'asc');
+  };
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -124,6 +138,14 @@ console.log(`⬇️ selectedAuthor,sortByTitle,userList ⬇️`, selectedAuthor,
   const handleDrawerClose = () => {
     setOpen(false);
   };
+   const handleChangePage = (event, newPage) => {
+     setPage(newPage);
+   };
+
+   const handleChangeRowsPerPage = (event) => {
+     setRowsPerPage(parseInt(event.target.value, 10));
+     setPage(0);
+   };
 
   const theme = useTheme();
   return (
@@ -159,56 +181,71 @@ console.log(`⬇️ selectedAuthor,sortByTitle,userList ⬇️`, selectedAuthor,
           <p>Loading...</p>
         ) : (
           <TableContainer component={Paper}>
-            <div>
-              <button onClick={setSortByTitleFn} type="button">
-                SORT BY Title{' '}
-              </button>
-            </div>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell align="right" />
-                  <TableCell align="right">Title</TableCell>
+                  <TableCell align="right">
+                    {' '}
+                    <Button onClick={setSortByTitleFn} type="button">
+                      SORT BY Title{' '}
+                    </Button>
+                  </TableCell>
                   <TableCell align="right">Author</TableCell>
                   <TableCell align="right">Year</TableCell>
-                  <TableCell align="right">Pages</TableCell>
+                  <TableCell align="right">
+                    {' '}
+                    <Button onClick={setSortByPagesFn} type="button">
+                      SORT BY Pages
+                    </Button>
+                  </TableCell>
                   <TableCell align="right">Quantity</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {userList.map((row) => (
-                    <TableRow
-                      onClick={() => {
-                        dispatch(addBookState(row.id));
-                        handleDrawerOpen();
-                      }}
-                      key={row.id}
-                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                      <TableCell align="right">
-                        <Box
-                          component="img"
-                          src={row.coverPhoto}
-                          alt={row.title}
-                          sx={{
-                            height: 100,
-                            width: 70
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell align="right">{row.title}</TableCell>
-                      <TableCell align="right">{row.nameOfAuthor}</TableCell>
-                      <TableCell align="right">{row.yearOfBublishing}</TableCell>
-                      <TableCell align="right">{row.numOfPages}</TableCell>
-                      <TableCell align="right">{row.quantity}</TableCell>
-                      <TableCell align="right">
-                        <MoreVertIcon />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {userList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index)=> (
+                  <TableRow
+                    onClick={() => {
+                      dispatch(addBookState(row.id));
+                      handleDrawerOpen();
+                    }}
+                    key={row.id}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell align="right">
+                      <Box
+                        component="img"
+                        src={row.coverPhoto}
+                        alt={row.title}
+                        sx={{
+                          height: 100,
+                          width: 70
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell align="right">{row.title}</TableCell>
+                    <TableCell align="right">{row.nameOfAuthor}</TableCell>
+                    <TableCell align="right">{row.yearOfBublishing}</TableCell>
+                    <TableCell align="right">{row.numOfPages}</TableCell>
+                    <TableCell align="right">{row.quantity}</TableCell>
+                    <TableCell align="right">
+                      <MoreVertIcon />
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
         )}
+        <TablePagination
+          rowsPerPageOptions={[10, 25]}
+          component="div"
+          count={10}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Main>
       <Drawer
         sx={{

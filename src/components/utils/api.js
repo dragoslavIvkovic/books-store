@@ -1,9 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import axios from 'axios';
 
-export const getUsers = async (sortByTitle, sortByAuthor) => {
-  const apiUrl = `https://book-store.mvsoft.co.rs/books?sortByTitle=${sortByTitle}&sortByAuthor=${sortByAuthor}`;
+export const getUsers = async (selectedAuthor, sortByTitle) => {
+  const apiUrl = `https://book-store.mvsoft.co.rs/books?author=${selectedAuthor}&sortByTitle=${sortByTitle}`;
   const response = await axios.get(apiUrl);
+  console.log(`⬇️ apiUrl ⬇️`, apiUrl);
   return response.data.records;
 };
 
