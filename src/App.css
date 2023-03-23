@@ -1,13 +1,43 @@
- body{
+body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
- }
- 
- 
- .App{
+  overflow-x: hidden;
+}
+
+.App {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.MuiTableCell-root {
+  border: none !important;
+}
+ 
+ .MuiPaper-root{
+    border-color:none !important;
+    box-shadow: none !important;
  }
 
+ .MuiTablePagination-root{
+      border-top: 1px solid lightgray;
+
+ }
+
+thead tr {
+  border-bottom: 0.5px solid lightgray;
+}
+
+tr:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+h5 {
+  color: gray !important;
+}
+
+p {
+  padding-left: 20px;
+  color: gray !important;
+}

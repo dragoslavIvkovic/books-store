@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Box } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { getBookById } from '../components/utils/api';
 
 function SelectedBookPage() {
@@ -21,40 +21,63 @@ function SelectedBookPage() {
   }, [bookId]);
 
   return (
-    <Box sx={{
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-    }}
-    >
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+      }}>
       <Box
         component="img"
         src={bookById?.coverPhoto}
         alt={bookById?.title}
         sx={{
-          height: 100,
-          width: 70,
+          margin: '0 auto',
+          maxWidth: '100%',
+          width: '100%',
+          height: '40vh',
+          overflow: 'hidden'
         }}
       />
       <p>info</p>
-      <h1>
-        Title:
-        {bookById?.title}
-      </h1>
-      <h1>
-        Author:
-        {bookById?.nameOfAuthor}
-      </h1>
-      <h1>
-        Year:
-        {bookById?.yearOfPublishing}
-      </h1>
-      <h1>
-        Pages:
-        {bookById?.numberOfPages}
-      </h1>
-      <h1>
-        Quantity:
-        {bookById?.quantity}
-      </h1>
+
+      <Grid container spacing={5} sx={{paddingLeft:"20px"}}>
+        <Grid item xs={3}>
+          Title:
+        </Grid>
+        <Grid item xs={9}>
+          {bookById?.title}
+        </Grid>
+
+        <Grid item xs={3}>
+          Author:
+        </Grid>
+        <Grid item xs={9}>
+          {bookById?.nameOfAuthor}
+        </Grid>
+
+        <Grid item xs={3}>
+          Year:
+        </Grid>
+        <Grid item xs={9}>
+          {bookById?.yearOfPublishing}
+        </Grid>
+
+        <Grid item xs={3}>
+          Pages:{' '}
+        </Grid>
+        <Grid item xs={9}>
+          {bookById?.numberOfPages}
+        </Grid>
+
+        <Grid item xs={3}>
+          Quantity:{' '}
+        </Grid>
+        <Grid item xs={9}>
+          {bookById?.quantity}
+        </Grid>
+      </Grid>
     </Box>
   );
 }

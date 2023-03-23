@@ -6,7 +6,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -24,13 +23,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { delateBookById, getUsers } from '../components/utils/api';
 import { addBookState, setMode } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
-import { Button, TablePagination } from '@mui/material';
+import { Box, Button, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { CircleWithCrossIcon } from '../assets/AddIcon';
+import '../App.css';
 
+const CircleWithCrossIconStyled = styled(CircleWithCrossIcon)({
+  '&:focus': {
+    outline: 'none'
+  },
+  borderRadius: '50%',
+  width: '78px',
+  height: '78px',
+  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'
+});
 
-
-const drawerWidth = 600;
+const drawerWidth = 400;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -38,35 +47,35 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
     padding: theme.spacing(3),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
+      duration: theme.transitions.duration.leavingScreen
     }),
     marginRight: -drawerWidth,
     ...(open && {
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
+        duration: theme.transitions.duration.enteringScreen
       }),
-      marginRight: 0,
-    }),
-  }),
+      marginRight: 0
+    })
+  })
 );
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== 'open'
 })(({ theme, open }) => ({
   transition: theme.transitions.create(['margin', 'width'], {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
+    duration: theme.transitions.duration.leavingScreen
   }),
   ...(open && {
     width: `calc(100% - ${drawerWidth}px)`,
     height: '150px',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
+      duration: theme.transitions.duration.enteringScreen
     }),
-    marginRight: drawerWidth,
-  }),
+    marginRight: drawerWidth
+  })
 }));
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -96,35 +105,34 @@ function Home() {
     setSelectedAuthor(event.target.value);
   };
   const authorFilter = [...new Set(userList.map((user) => user.nameOfAuthor))];
-  
- const getUserList = async () => {
-   setLoading(true);
-   const usersData = await getUsers(selectedAuthor, sortByTitle);
-   const sortedUsers =
-     sortByPages === 'asc'
-       ? usersData.sort((a, b) => a.numOfPages - b.numOfPages)
-       : usersData.sort((a, b) => b.numOfPages - a.numOfPages);
-   setUserList(sortedUsers);
-   console.log(`⬇️ sortedUsers ⬇️`, sortedUsers, usersData, usersData);
-   setLoading(false);
- };
+
+  const getUserList = async () => {
+    setLoading(true);
+    const usersData = await getUsers(selectedAuthor, sortByTitle);
+    const sortedUsers =
+      sortByPages === 'asc'
+        ? usersData.sort((a, b) => a.numOfPages - b.numOfPages)
+        : usersData.sort((a, b) => b.numOfPages - a.numOfPages);
+    setUserList(sortedUsers);
+    console.log(`⬇️ sortedUsers ⬇️`, sortedUsers, usersData, usersData);
+    setLoading(false);
+  };
 
   const delateBook = async () => {
-   setLoading(true);
-   const bookData = await delateBookById(bookId);
+    setLoading(true);
+    const bookData = await delateBookById(bookId);
     getUserList();
     setOpen(false);
+    FormControl;
   };
 
   useEffect(() => {
     getUserList();
   }, [selectedAuthor, sortByTitle, sortByPages]);
 
-
   const setSortByTitleFn = () => {
     setSortByTitle(sortByTitle === 'asc' ? 'desc' : 'asc');
   };
-
 
   const setSortByPagesFn = () => {
     setSortByPages(sortByPages === 'asc' ? 'desc' : 'asc');
@@ -138,101 +146,132 @@ function Home() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-   const handleChangePage = (event, newPage) => {
-     setPage(newPage);
-   };
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
-   const handleChangeRowsPerPage = (event) => {
-     setRowsPerPage(parseInt(event.target.value, 10));
-     setPage(0);
-   };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const theme = useTheme();
   return (
-    <Box sx={{ display: 'flex', marginTop: '2rem' }}>
-      <AppBar position="fixed" open={open} sx={{ height: '150px' }}>
-        <Box sx={{ right: '300px' }}>
-          <AddCircleIcon
+    <Box
+      sx={{ display: 'flex', marginTop: '2rem', alignItems: 'center', justifyContent: 'center' }}>
+      <AppBar position="fixed" open={open} sx={{ height: '150px', background: '#0b4994' }}>
+        <Box sx={{ marginLeft: '25vw', marginTop: '110px' }}>
+          <CircleWithCrossIconStyled
             onClick={() => {
               navigate('EditBookPage');
               dispatch(setMode('add'));
             }}
           />
         </Box>
+        <Box
+          sx={{
+            marginLeft: '70vw',  
+            marginTop: '-130px', 
+             position: 'relative',
+  left: '-5%',
+          }}>
+          <FormControl
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'white'
+                },
+                '&:hover fieldset': {
+                  borderColor: 'white'
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: 'white'
+                }
+              },
+              '& .MuiInputLabel-root': {
+                color: 'white'
+              },
+              '& .MuiSelect-icon': {
+                // Dodajte ovo pravilo da biste promenili boju strelice prema dolje
+                color: 'white'
+              }
+            }}>
+            <InputLabel id="author-select-label">Author</InputLabel>
+            <Select
+              labelId="author-select-label"
+              id="author-select"
+              value={selectedAuthor}
+              onChange={handleAuthorChange}
+              sx={{ backgroundColor: '#0b4994', color: 'white', width: '10vw' }}>
+              <MenuItem value="">All</MenuItem>
+              {authorFilter.map((author) => (
+                <MenuItem key={author} value={author}>
+                  {author}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </AppBar>
+
       <Main open={open}>
         <DrawerHeader sx={{ backgroundColor: 'white' }} />
-        <FormControl>
-          <InputLabel id="author-select-label">Author</InputLabel>
-          <Select
-            labelId="author-select-label"
-            id="author-select"
-            value={selectedAuthor}
-            onChange={handleAuthorChange}>
-            <MenuItem value="">All</MenuItem>
-            {authorFilter.map((author) => (
-              <MenuItem key={author} value={author}>
-                {author}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} sx={{ width: '80vw', paddingLeft: '2vw' }}>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="right" />
+                 
                   <TableCell align="right">
-                    {' '}
                     <Button onClick={setSortByTitleFn} type="button">
-                      SORT BY Title{' '}
+                      Title
                     </Button>
                   </TableCell>
                   <TableCell align="right">Author</TableCell>
                   <TableCell align="right">Year</TableCell>
                   <TableCell align="right">
-                    {' '}
                     <Button onClick={setSortByPagesFn} type="button">
-                      SORT BY Pages
+                      Pages
                     </Button>
                   </TableCell>
                   <TableCell align="right">Quantity</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {userList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index)=> (
-                  <TableRow
-                    onClick={() => {
-                      dispatch(addBookState(row.id));
-                      handleDrawerOpen();
-                    }}
-                    key={row.id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell align="right">
-                      <Box
-                        component="img"
-                        src={row.coverPhoto}
-                        alt={row.title}
-                        sx={{
-                          height: 100,
-                          width: 70
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="right">{row.title}</TableCell>
-                    <TableCell align="right">{row.nameOfAuthor}</TableCell>
-                    <TableCell align="right">{row.yearOfBublishing}</TableCell>
-                    <TableCell align="right">{row.numOfPages}</TableCell>
-                    <TableCell align="right">{row.quantity}</TableCell>
-                    <TableCell align="right">
-                      <MoreVertIcon />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {userList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => (
+                    <TableRow
+                      onClick={() => {
+                        dispatch(addBookState(row.id));
+                        handleDrawerOpen();
+                      }}
+                      key={row.id}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                      <TableCell align="right">
+                        <Box
+                          component="img"
+                          src={row.coverPhoto}
+                          alt={row.title}
+                          sx={{
+                            height: 100,
+                            width: 70
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align="right">{row.title}</TableCell>
+                      <TableCell align="right">{row.nameOfAuthor}</TableCell>
+                      <TableCell align="right">{row.yearOfBublishing}</TableCell>
+                      <TableCell align="right">{row.numOfPages}</TableCell>
+                      <TableCell align="right">{row.quantity}</TableCell>
+                      <TableCell align="right">
+                        <MoreVertIcon />
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
