@@ -19,9 +19,10 @@ import { styled, useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDispatch, useSelector } from 'react-redux';
 import { delateBookById, getUsers } from '../components/utils/api';
-import { addBookState } from '../state/booksReducer';
+import { addBookState, setMode } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -130,12 +131,15 @@ function Home() {
   const theme = useTheme();
   return (
     <Box sx={{ display: 'flex', marginTop: '2rem' }}>
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div">
-            Books
-          </Typography>
-        </Toolbar>
+      <AppBar position="fixed" open={open} sx={{ height: '150px' }}>
+        <Box sx={{ right: '300px' }}>
+          <AddCircleIcon
+            onClick={() => {
+              navigate('EditBookPage');
+              dispatch(setMode('add'));
+            }}
+          />
+        </Box>
       </AppBar>
       <Main open={open}>
         <DrawerHeader sx={{ backgroundColor: 'white' }} />
@@ -169,7 +173,7 @@ function Home() {
                       dispatch(addBookState(row.id));
                       handleDrawerOpen();
                     }}
-                    key={row.title}
+                    key={row.id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell align="right">
                       <Box
@@ -210,8 +214,12 @@ function Home() {
         open={open}>
         <DrawerHeader>
           <Button sx={{ backgroundColor: 'transparent', color: 'white' }}>
-            <EditIcon onClick={() => navigate('EditBookPage')
-            }/>
+            <EditIcon
+              onClick={() => {
+                navigate('EditBookPage');
+                dispatch(setMode('edit'));
+              }}
+            />
           </Button>
           <Button onClick={delateBook} sx={{ backgroundColor: 'transparent', color: 'white' }}>
             <DeleteIcon />
