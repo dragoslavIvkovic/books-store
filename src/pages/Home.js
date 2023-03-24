@@ -8,8 +8,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -18,7 +16,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDispatch, useSelector } from 'react-redux';
 import { delateBookById, getUsers } from '../components/utils/api';
 import { addBookState, setMode } from '../state/booksReducer';
@@ -92,6 +89,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 function Home() {
   const [page, setPage] = React.useState(0);
   const [sortByPages, setSortByPages] = useState('asc');
+
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -191,7 +189,6 @@ function Home() {
                 color: 'white'
               },
               '& .MuiSelect-icon': {
-                // Dodajte ovo pravilo da biste promenili boju strelice prema dolje
                 color: 'white'
               }
             }}>
@@ -223,7 +220,8 @@ function Home() {
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="right"></TableCell>
+                  <TableCell align="right">
+                  </TableCell>
                   <TableCell align="right">
                     <Button onClick={setSortByTitleFn} type="button">
                       Title
@@ -276,9 +274,9 @@ function Home() {
           </TableContainer>
         )}
         <TablePagination
-          rowsPerPageOptions={[5, 10, 30]}
+          rowsPerPageOptions={[10, 25]}
           component="div"
-          count={userList.length}
+          count={10}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
