@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { getBookById } from '../components/utils/api';
 
 function SelectedBookPage() {
@@ -26,8 +26,25 @@ function SelectedBookPage() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
-        justifyContent: 'center',
+        justifyContent: 'center'
       }}>
+      <Box>
+        <Typography
+          variant="h6"
+          item
+          xs={9}
+          sx={{ marginTop: '-40px', color: 'white', marginLeft: '20px' }}>
+          {bookById?.title}
+        </Typography>
+
+        <Typography
+          variant="h6"
+          item
+          xs={3}
+          sx={{ marginTop: '-60px', color: 'white',  marginLeft: '20px' }}>
+          Author:
+        </Typography>
+      </Box>
       <Box
         component="img"
         src={bookById?.coverPhoto}
@@ -42,7 +59,7 @@ function SelectedBookPage() {
       />
       <p>info</p>
 
-      <Grid container spacing={5} sx={{paddingLeft:"20px"}}>
+      <Grid container spacing={5} sx={{ paddingLeft: '20px' }}>
         <Grid item xs={3}>
           Title:
         </Grid>

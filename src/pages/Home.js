@@ -9,9 +9,6 @@ import Paper from '@mui/material/Paper';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { styled, useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -24,6 +21,8 @@ import { Box, Button, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { CircleWithCrossIcon } from '../assets/AddIcon';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import '../App.css';
 
 const CircleWithCrossIconStyled = styled(CircleWithCrossIcon)({
@@ -80,7 +79,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'flex-start',
   height: '150px',
   padding: theme.spacing(0, 1),
-  backgroundColor: 'darkblue',
+  backgroundColor: '#023373',
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end'
@@ -89,7 +88,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 function Home() {
   const [page, setPage] = React.useState(0);
   const [sortByPages, setSortByPages] = useState('asc');
-
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -128,10 +126,12 @@ function Home() {
   }, [selectedAuthor, sortByTitle, sortByPages]);
 
   const setSortByTitleFn = () => {
+    
     setSortByTitle(sortByTitle === 'asc' ? 'desc' : 'asc');
   };
 
   const setSortByPagesFn = () => {
+     
     setSortByPages(sortByPages === 'asc' ? 'desc' : 'asc');
   };
   const [open, setOpen] = React.useState(false);
@@ -153,11 +153,12 @@ function Home() {
   };
 
   const theme = useTheme();
+
   return (
     <Box
       sx={{ display: 'flex', marginTop: '2rem', alignItems: 'center', justifyContent: 'center' }}>
       <AppBar position="fixed" open={open} sx={{ height: '150px', background: '#0b4994' }}>
-        <Box sx={{ marginLeft: '25vw', marginTop: '110px' }}>
+        <Box sx={{ marginLeft: '2vw', marginTop: '110px' }}>
           <CircleWithCrossIconStyled
             onClick={() => {
               navigate('EditBookPage');
@@ -212,29 +213,30 @@ function Home() {
 
       <Main open={open}>
         <DrawerHeader sx={{ backgroundColor: 'white' }} />
-
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <TableContainer component={Paper} sx={{ width: '80vw', paddingLeft: '2vw' }}>
-            <Table aria-label="simple table">
+          <TableContainer
+            component={Paper}
+            sx={{ width: '80vw', paddingLeft: '3vw', maxHeight: 600, overflow: 'auto' }}>
+            <Table aria-label="simple table" stickyHeader>
               <TableHead>
                 <TableRow>
-                  <TableCell align="right">
-                  </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left" sx={{ boxShadow: 'none' }}></TableCell>
+                  <TableCell align="left">
                     <Button onClick={setSortByTitleFn} type="button">
-                      Title
+                      Title {(sortByTitle == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
                     </Button>
                   </TableCell>
-                  <TableCell align="right">Author</TableCell>
-                  <TableCell align="right">Year</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">Author</TableCell>
+                  <TableCell align="left">Year</TableCell>
+                  <TableCell align="left">
                     <Button onClick={setSortByPagesFn} type="button">
-                      Pages
+                      Pages{(sortByPages == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
                     </Button>
                   </TableCell>
-                  <TableCell align="right">Quantity</TableCell>
+                  <TableCell align="left">Quantity</TableCell>
+                  <TableCell align="left"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -248,7 +250,7 @@ function Home() {
                       }}
                       key={row.id}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                      <TableCell align="right">
+                      <TableCell align="left">
                         <Box
                           component="img"
                           src={row.coverPhoto}
@@ -259,12 +261,12 @@ function Home() {
                           }}
                         />
                       </TableCell>
-                      <TableCell align="right">{row.title}</TableCell>
-                      <TableCell align="right">{row.nameOfAuthor}</TableCell>
-                      <TableCell align="right">{row.yearOfBublishing}</TableCell>
-                      <TableCell align="right">{row.numOfPages}</TableCell>
-                      <TableCell align="right">{row.quantity}</TableCell>
-                      <TableCell align="right">
+                      <TableCell align="left">{row.title}</TableCell>
+                      <TableCell align="left">{row.nameOfAuthor}</TableCell>
+                      <TableCell align="left">{row.yearOfBublishing}</TableCell>
+                      <TableCell align="left">{row.numOfPages}</TableCell>
+                      <TableCell align="left">{row.quantity}</TableCell>
+                      <TableCell align="left">
                         <MoreVertIcon />
                       </TableCell>
                     </TableRow>
@@ -295,7 +297,7 @@ function Home() {
         anchor="right"
         open={open}>
         <DrawerHeader>
-          <Button sx={{ backgroundColor: 'transparent', color: 'white' }}>
+          <Button sx={{ backgroundColor: 'transparent', color: 'white', marginTop: '1vh' }}>
             <EditIcon
               onClick={() => {
                 navigate('EditBookPage');
@@ -303,12 +305,11 @@ function Home() {
               }}
             />
           </Button>
-          <Button onClick={delateBook} sx={{ backgroundColor: 'transparent', color: 'white' }}>
+          <Button
+            onClick={delateBook}
+            sx={{ backgroundColor: 'transparent', color: 'white', marginTop: '1vh' }}>
             <DeleteIcon />
           </Button>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
         </DrawerHeader>
         <Divider />
         <SelectedBookPage />

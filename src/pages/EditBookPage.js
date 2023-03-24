@@ -97,7 +97,7 @@ const EditBookPage = () => {
         />
         <Typography
           variant="h4"
-          sx={{ paddingLeft: '5vw', marginTop: '4vh', background: '#0b4994', color: 'white' }}>
+          sx={{ paddingLeft: '5vw', marginTop: '3vh', background: '#0b4994', color: 'white' }}>
           {mode == 'edit' ? 'Edit' : 'Add Book'}
           
         </Typography>
