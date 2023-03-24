@@ -12,14 +12,14 @@ const EditBookPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [book, setBook] = useState({
-    isbn: 0,
-    title: '',
-    author: '',
-    date: '',
-    pages: '',
-    yearOfPublishing: '',
-    quantity: '',
-    coverPhoto: '',
+    isbn: 34453534,
+    title: 'string',
+    nameOfAuthor: 'string',
+    dateOfBirthAuthor: '1930-04-17',
+    numberOfPages: 8,
+    yearOfPublishing: 1991,
+    quantity: 8,
+    coverPhoto: 'string'
   });
 
   const getBookById = async (id) => {
@@ -42,20 +42,21 @@ const handleSubmit = async (e) => {
   try {
     if (mode === 'edit') {
       // Update existing book
-      await updateBook(bookId, { quantity: book.quantity });
+      await updateBook(bookId, { quantity: parseInt(book.quantity) });
       alert('Quantity updated successfully');
     } else {
       // Add new book
       console.log(`⬇️ book ⬇️`, book);
       await addBook({
-        isbn: 0,
+        isbn: ath.floor(Math.random() * 10) + 1,
         title: book.title,
-        nameOfAuthor: book.author,
-        dateOfBirthAuthor: book.date,
-        numberOfPages: book.pages,
-        yearOfPublishing: book.yearOfPublishing,
-        quantity: book.quantity,
-        coverPhoto: book.coverPhoto
+        nameOfAuthor: book.nameOfAuthor,
+        dateOfBirthAuthor: book.dateOfBirthAuthor,
+        numberOfPages: parseInt(book.numberOfPages),
+        yearOfPublishing: parseInt(book.yearOfPublishing),
+        quantity: parseInt(book.quantity),
+        // coverPhoto: book.coverPhoto
+        coverPhoto: 'string'
       });
       alert('Book added successfully');
     }
@@ -64,12 +65,20 @@ const handleSubmit = async (e) => {
   }
 };
 
+
 const handleInputChange = (e) => {
   setBook({ ...book, [e.target.name]: e.target.value });
 };
 
 const handleFileChange = (e) => {
-  setBook({ ...book, coverPhoto: e.target.files[0] });
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    setBook({ ...book, coverPhoto: reader.result });
+  };
+
+  reader.readAsDataURL(file);
 };
 
 if (loading) {
@@ -94,26 +103,26 @@ if (loading) {
         />
         <input
           type="text"
-          name="author"
+          name="nameOfAuthor"
           placeholder="Author"
-          value={book.author}
+          value={book.nameOfAuthor}
           onChange={handleInputChange}
           disabled={mode === 'edit'}
           required
         />
         <input
           type="date"
-          name="date"
-          value={book.date}
+          name="dateOfBirthAuthor"
+          value={book.dateOfBirthAuthor}
           onChange={handleInputChange}
           disabled={mode === 'edit'}
           required
         />
         <input
           type="number"
-          name="pages"
+          name="numberOfPages"
           placeholder="Number of Pages"
-          value={book.pages}
+          value={book.numberOfPages}
           onChange={handleInputChange}
           disabled={mode === 'edit'}
           required

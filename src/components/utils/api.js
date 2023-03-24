@@ -20,11 +20,18 @@ export const delateBookById = async (bookId) => {
   return response.data;
 };
 
-export const addBook = async (book) => {
-  const apiUrl = `https://book-store.mvsoft.co.rs/books`;
-  const response = await axios.post(apiUrl, book);
-  return response.data;
+
+
+export const addBook = async (bookData) => {
+  try {
+    const response = await axios.post('https://book-store.mvsoft.co.rs/books', bookData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding book:', error);
+    throw error;
+  }
 };
+
 
 
 export const updateBook = async (bookId, updatedBookData) => {

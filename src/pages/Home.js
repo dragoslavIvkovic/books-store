@@ -92,7 +92,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 function Home() {
   const [page, setPage] = React.useState(0);
   const [sortByPages, setSortByPages] = useState('asc');
-
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -170,10 +169,10 @@ function Home() {
         </Box>
         <Box
           sx={{
-            marginLeft: '70vw',  
-            marginTop: '-130px', 
-             position: 'relative',
-  left: '-5%',
+            marginLeft: '70vw',
+            marginTop: '-130px',
+            position: 'relative',
+            left: '-5%'
           }}>
           <FormControl
             sx={{
@@ -224,7 +223,7 @@ function Home() {
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                 
+                  <TableCell align="right"></TableCell>
                   <TableCell align="right">
                     <Button onClick={setSortByTitleFn} type="button">
                       Title
@@ -277,9 +276,9 @@ function Home() {
           </TableContainer>
         )}
         <TablePagination
-          rowsPerPageOptions={[10, 25]}
+          rowsPerPageOptions={[5, 10, 30]}
           component="div"
-          count={10}
+          count={userList.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
