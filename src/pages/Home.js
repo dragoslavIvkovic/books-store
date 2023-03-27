@@ -14,10 +14,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
-import { delateBookById, getUsers } from '../components/utils/api';
+import { deleteBookById, getUsers } from '../components/utils/api';
 import { addBookState, setMode } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
-import { Box, Button, TablePagination } from '@mui/material';
+import { Box, Button, IconButton, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { CircleWithCrossIcon } from '../assets/AddIcon';
@@ -113,9 +113,9 @@ function Home() {
     setLoading(false);
   };
 
-  const delateBook = async () => {
+  const deleteBook = async () => {
     setLoading(true);
-    const bookData = await delateBookById(bookId);
+    const bookData = await deleteBookById(bookId);
     getUserList();
     setOpen(false);
     FormControl;
@@ -225,14 +225,14 @@ function Home() {
                   <TableCell align="left" sx={{ boxShadow: 'none' }}></TableCell>
                   <TableCell align="left">
                     <Button onClick={setSortByTitleFn} type="button">
-                      Title {(sortByTitle == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
+                      Title {sortByTitle == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                     </Button>
                   </TableCell>
                   <TableCell align="left">Author</TableCell>
                   <TableCell align="left">Year</TableCell>
                   <TableCell align="left">
                     <Button onClick={setSortByPagesFn} type="button">
-                      Pages{(sortByPages == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
+                      Pages{sortByPages == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                     </Button>
                   </TableCell>
                   <TableCell align="left">Quantity</TableCell>
@@ -268,6 +268,9 @@ function Home() {
                       <TableCell align="left">{row.quantity}</TableCell>
                       <TableCell align="left">
                         <MoreVertIcon />
+                       
+
+                        
                       </TableCell>
                     </TableRow>
                   ))}
@@ -306,7 +309,7 @@ function Home() {
             />
           </Button>
           <Button
-            onClick={delateBook}
+            onClick={deleteBook}
             sx={{ backgroundColor: 'transparent', color: 'white', marginTop: '1vh' }}>
             <DeleteIcon />
           </Button>

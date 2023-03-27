@@ -14,7 +14,7 @@ export const getBookById = async (bookId) => {
   return response.data;
 };
 
-export const delateBookById = async (bookId) => {
+export const deleteBookById = async (bookId) => {
   const apiUrl = `https://book-store.mvsoft.co.rs/books/${bookId}`;
   const response = await axios.delete(apiUrl);
   return response.data;

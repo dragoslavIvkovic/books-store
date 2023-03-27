@@ -4,7 +4,6 @@ import { addBook, updateBook, getBookById as fetchBookById } from '../components
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
 
 const EditBookPage = () => {
   const navigate = useNavigate();
@@ -45,6 +44,9 @@ const EditBookPage = () => {
         // Update existing book
         await updateBook(bookId, { quantity: parseInt(book.quantity) });
         alert('Quantity updated successfully');
+        setTimeout(() => {
+          navigate(-1);
+        }, 500);
       } else {
         // Add new book
         console.log(`⬇️ book ⬇️`, book);
@@ -60,6 +62,9 @@ const EditBookPage = () => {
           // coverPhoto: 'string'
         });
         alert('Book added successfully');
+        setTimeout(() => {
+          navigate(-1);
+        }, 500);
       }
     } catch (error) {
       alert('An error occurred while saving the book');
@@ -196,7 +201,7 @@ const EditBookPage = () => {
             disabled={mode === 'edit'}
             required={mode !== 'edit'}
           />
-          <Button variant="contained" type="submit">
+          <Button variant="contained" type="submit" >
             {mode === 'edit' ? 'Update Quantity' : 'Add Book'}
           </Button>
         </Box>
