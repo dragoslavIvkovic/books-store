@@ -4,6 +4,7 @@ import { addBook, updateBook, getBookById as fetchBookById } from '../components
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
 
 const EditBookPage = () => {
   const navigate = useNavigate();
@@ -48,15 +49,15 @@ const EditBookPage = () => {
         // Add new book
         console.log(`⬇️ book ⬇️`, book);
         await addBook({
-          isbn: Math.floor(Math.random() * 10) + 1,
+          isbn: Math.floor(Math.random() * 1000000) + 1,
           title: book.title,
           nameOfAuthor: book.nameOfAuthor,
           dateOfBirthAuthor: book.dateOfBirthAuthor,
           numberOfPages: parseInt(book.numberOfPages),
           yearOfPublishing: parseInt(book.yearOfPublishing),
           quantity: parseInt(book.quantity),
-          // coverPhoto: book.coverPhoto
-          coverPhoto: 'string'
+          coverPhoto: book.coverPhoto
+          // coverPhoto: 'string'
         });
         alert('Book added successfully');
       }
