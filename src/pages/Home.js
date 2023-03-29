@@ -100,14 +100,15 @@ function Home() {
     setSelectedAuthor(event.target.value);
   };
   const authorFilter = [...new Set(userList.map((user) => user.nameOfAuthor))];
-
+  const startPage = 0;const limitPage = 30;
   const getUserList = async () => {
     setLoading(true);
-    const usersData = await getUsers(selectedAuthor, sortByTitle);
+    const usersData = await getUsers(selectedAuthor, sortByTitle, startPage, limitPage);
+    console.log('usersData', usersData)
     const sortedUsers =
       sortByPages === 'asc'
-        ? usersData.sort((a, b) => a.numOfPages - b.numOfPages)
-        : usersData.sort((a, b) => b.numOfPages - a.numOfPages);
+        ? usersData.records.sort((a, b) => a.numOfPages - b.numOfPages)
+        : usersData.records.sort((a, b) => b.numOfPages - a.numOfPages);
     setUserList(sortedUsers);
     console.log(`⬇️ sortedUsers ⬇️`, sortedUsers, usersData, usersData);
     setLoading(false);
@@ -125,13 +126,11 @@ function Home() {
     getUserList();
   }, [selectedAuthor, sortByTitle, sortByPages]);
 
-  const setSortByTitleFn = () => {
-    
+  const setSortByTitleFn = () => {  
     setSortByTitle(sortByTitle === 'asc' ? 'desc' : 'asc');
   };
 
-  const setSortByPagesFn = () => {
-     
+  const setSortByPagesFn = () => { 
     setSortByPages(sortByPages === 'asc' ? 'desc' : 'asc');
   };
   const [open, setOpen] = React.useState(false);
@@ -279,9 +278,8 @@ function Home() {
           </TableContainer>
         )}
         <TablePagination
-          rowsPerPageOptions={[10, 25]}
           component="div"
-          count={10}
+          count={30}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
