@@ -14,7 +14,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteBookById, getUsers } from '../components/utils/api';
+import { deleteBookById, getBooks } from '../components/utils/api';
 import { addBookState, setMode } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
 import { Box, Button, IconButton, TablePagination } from '@mui/material';
@@ -89,7 +89,7 @@ function Home() {
   const [page, setPage] = React.useState(0);
   const [sortByPages, setSortByPages] = useState('asc');
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [userList, setUserList] = useState([]);
+  const [bookList, setBookList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortByTitle, setSortByTitle] = useState('asc');
   const dispatch = useDispatch();
@@ -99,34 +99,38 @@ function Home() {
   const handleAuthorChange = (event) => {
     setSelectedAuthor(event.target.value);
   };
-  const authorFilter = [...new Set(userList.map((user) => user.nameOfAuthor))];
-  const startPage = 0;const limitPage = 30;
-  const getUserList = async () => {
+  const authorFilter = [...new Set(bookList.map((book) => book.nameOfAuthor))];
+  const startPage = 0;
+  const limitPage = 30;
+
+  
+  const getBookList = async () => {
     setLoading(true);
-    const usersData = await getUsers(selectedAuthor, sortByTitle, startPage, limitPage);
-    console.log('usersData', usersData)
-    const sortedUsers =
+    const booksData = await getBooks(selectedAuthor, sortByTitle, startPage, limitPage);
+ 
+    const sortedBooks =
       sortByPages === 'asc'
-        ? usersData.records.sort((a, b) => a.numOfPages - b.numOfPages)
-        : usersData.records.sort((a, b) => b.numOfPages - a.numOfPages);
-    setUserList(sortedUsers);
-    console.log(`⬇️ sortedUsers ⬇️`, sortedUsers, usersData, usersData);
-    setLoading(false);
+        ? booksData.records.sort((a, b) => a.numOfPages - b.numOfPages)
+        : booksData.records.sort((a, b) => b.numOfPages - a.numOfPages);
+    setBookList(sortedBooks);
+    setBookList(sortedBooks);
+    console.log('Sorted book list:', sortedBooks);
+
+     setLoading(false);
   };
 
   const deleteBook = async () => {
     setLoading(true);
     const bookData = await deleteBookById(bookId);
-    getUserList();
+    getBookList();
     setOpen(false);
-    FormControl;
   };
 
   useEffect(() => {
-    getUserList();
+    getBookList();
   }, [selectedAuthor, sortByTitle, sortByPages]);
 
-  const setSortByTitleFn = () => {  
+  const setSortByTitleFn = () => {
     setSortByTitle(sortByTitle === 'asc' ? 'desc' : 'asc');
   };
 
@@ -209,7 +213,6 @@ function Home() {
           </FormControl>
         </Box>
       </AppBar>
-
       <Main open={open}>
         <DrawerHeader sx={{ backgroundColor: 'white' }} />
         {loading ? (
@@ -239,7 +242,7 @@ function Home() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {userList
+                {bookList
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow
@@ -267,9 +270,6 @@ function Home() {
                       <TableCell align="left">{row.quantity}</TableCell>
                       <TableCell align="left">
                         <MoreVertIcon />
-                       
-
-                        
                       </TableCell>
                     </TableRow>
                   ))}

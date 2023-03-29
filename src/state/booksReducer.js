@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const counterSlice = createSlice({
   name: 'books',
   initialState: {
-    bookId: 13,
+    bookId: null,
     mode:'edit'
   },
   reducers: {

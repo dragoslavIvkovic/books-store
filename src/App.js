@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 
 function App() {
   const bookId = useSelector((state) => state?.books?.bookId);
-    let { userId } = useParams();
+    // let { bookId } = useParams();
 
   return (
     <div className="App">
