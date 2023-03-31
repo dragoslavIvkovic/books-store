@@ -20,8 +20,6 @@ export const deleteBookById = async (bookId) => {
   return response.data;
 };
 
-
-
 export const addBook = async (bookData) => {
   try {
     const response = await axios.post('https://book-store.mvsoft.co.rs/books', bookData);
@@ -31,8 +29,6 @@ export const addBook = async (bookData) => {
     throw error;
   }
 };
-
-
 
 export const updateBook = async (bookId, updatedBookData) => {
   const apiUrl = `https://book-store.mvsoft.co.rs/books/${bookId}`;
