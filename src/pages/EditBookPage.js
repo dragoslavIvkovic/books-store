@@ -4,25 +4,46 @@ import { addBook, updateBook, getBookById as fetchBookById } from '../components
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
 
 const EditBookPage = () => {
   const navigate = useNavigate();
   const bookId = useSelector((state) => state?.books?.bookId);
   const mode = useSelector((state) => state?.books?.mode);
-  console.log(`⬇️ mode ⬇️`, mode);
+const [errors, setErrors] = useState({
+  title: false,
+  nameOfAuthor: false,
+  dateOfBirthAuthor: false,
+  numberOfPages: false,
+  yearOfPublishing: false,
+  quantity: false
+});
 
   const [loading, setLoading] = useState(false);
   const [book, setBook] = useState({
     isbn: 34453534,
-    title: 'string',
-    nameOfAuthor: 'string',
-    dateOfBirthAuthor: '1930-04-17',
-    numberOfPages: 8,
-    yearOfPublishing: 1991,
-    quantity: 8,
-    coverPhoto: 'string'
+    title: '',
+    nameOfAuthor: '',
+    dateOfBirthAuthor: '',
+    numberOfPages: null,
+    yearOfPublishing: null,
+    quantity: null,
+    coverPhoto: ''
   });
+
+  const validateFields = () => {
+    const newErrors = {
+      title: !book.title,
+      nameOfAuthor: !book.nameOfAuthor,
+      dateOfBirthAuthor: !book.dateOfBirthAuthor,
+      numberOfPages: !(book.numberOfPages > 0),
+      yearOfPublishing: !(book.yearOfPublishing > 0),
+      quantity: !(book.quantity > 0)
+    };
+
+    setErrors(newErrors);
+    // Return true if there are no errors
+    return !Object.values(newErrors).some((error) => error);
+  };
 
   const getBookById = async (id) => {
     setLoading(true);
@@ -40,11 +61,16 @@ const EditBookPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!validateFields()) {
+      return;
+    }
+
     try {
       if (mode === 'edit') {
         // Update existing book
         await updateBook(bookId, { quantity: parseInt(book.quantity) });
         alert('Quantity updated successfully');
+          navigate(-1);
       } else {
         // Add new book
         console.log(`⬇️ book ⬇️`, book);
@@ -60,6 +86,9 @@ const EditBookPage = () => {
           // coverPhoto: 'string'
         });
         alert('Book added successfully');
+        setTimeout(() => {
+          navigate(-1);
+        }, 500);
       }
     } catch (error) {
       alert('An error occurred while saving the book');
@@ -100,7 +129,6 @@ const EditBookPage = () => {
           variant="h4"
           sx={{ paddingLeft: '5vw', marginTop: '3vh', background: '#0b4994', color: 'white' }}>
           {mode == 'edit' ? 'Edit' : 'Add Book'}
-          
         </Typography>
       </Grid>
       <Box
@@ -117,6 +145,8 @@ const EditBookPage = () => {
         autoComplete="off"
         onSubmit={handleSubmit}>
         <TextField
+          error={errors.title}
+          helperText={errors.title ? 'Title is required' : ''}
           label="Title"
           variant="standard"
           margin="normal"
@@ -129,6 +159,8 @@ const EditBookPage = () => {
           required
         />
         <TextField
+          error={errors.nameOfAuthor}
+          helperText={errors.nameOfAuthor ? 'Author Name is required' : ''}
           label="Author"
           variant="standard"
           margin="normal"
@@ -141,7 +173,8 @@ const EditBookPage = () => {
           required
         />
         <TextField
-          label="Date of birth(author)"
+          error={errors.dateOfBirthAuthor}
+          helperText={errors.dateOfBirthAuthor ? 'Date Of Birth is required' : ''}
           variant="standard"
           margin="normal"
           type="date"
@@ -151,7 +184,10 @@ const EditBookPage = () => {
           disabled={mode === 'edit'}
           required
         />
+        <Typography>Date of birth(author)</Typography>
         <TextField
+          error={errors.numberOfPages}
+          helperText={errors.numberOfPages ? 'Number Of Pages is required' : ''}
           label="Number of pages"
           variant="standard"
           margin="normal"
@@ -164,6 +200,8 @@ const EditBookPage = () => {
           required
         />
         <TextField
+          error={errors.yearOfPublishing}
+          helperText={errors.yearOfPublishing ? 'Year Of Publishing is required' : ''}
           label="Year of publishing"
           variant="standard"
           margin="normal"
@@ -176,6 +214,8 @@ const EditBookPage = () => {
           required
         />
         <TextField
+          error={errors.quantity}
+          helperText={errors.quantity ? 'Quantity is required' : ''}
           label="Quantity"
           variant="standard"
           margin="normal"

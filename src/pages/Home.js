@@ -14,10 +14,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
-import { delateBookById, getUsers } from '../components/utils/api';
+import { deleteBookById, getBooks } from '../components/utils/api';
 import { addBookState, setMode } from '../state/booksReducer';
 import SelectedBookPage from './SelectedBookPage';
-import { Box, Button, TablePagination } from '@mui/material';
+import { Box, Button, IconButton, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { CircleWithCrossIcon } from '../assets/AddIcon';
@@ -89,7 +89,7 @@ function Home() {
   const [page, setPage] = React.useState(0);
   const [sortByPages, setSortByPages] = useState('asc');
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [userList, setUserList] = useState([]);
+  const [bookList, setBookList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortByTitle, setSortByTitle] = useState('asc');
   const dispatch = useDispatch();
@@ -99,39 +99,42 @@ function Home() {
   const handleAuthorChange = (event) => {
     setSelectedAuthor(event.target.value);
   };
-  const authorFilter = [...new Set(userList.map((user) => user.nameOfAuthor))];
+  const authorFilter = [...new Set(bookList.map((book) => book.nameOfAuthor))];
+  const startPage = 0;
+  const limitPage = 30;
 
-  const getUserList = async () => {
+  
+  const getBookList = async () => {
     setLoading(true);
-    const usersData = await getUsers(selectedAuthor, sortByTitle);
-    const sortedUsers =
+    const booksData = await getBooks(selectedAuthor, sortByTitle, startPage, limitPage);
+ 
+    const sortedBooks =
       sortByPages === 'asc'
-        ? usersData.sort((a, b) => a.numOfPages - b.numOfPages)
-        : usersData.sort((a, b) => b.numOfPages - a.numOfPages);
-    setUserList(sortedUsers);
-    console.log(`⬇️ sortedUsers ⬇️`, sortedUsers, usersData, usersData);
-    setLoading(false);
+        ? booksData.records.sort((a, b) => a.numOfPages - b.numOfPages)
+        : booksData.records.sort((a, b) => b.numOfPages - a.numOfPages);
+    setBookList(sortedBooks);
+    setBookList(sortedBooks);
+    console.log('Sorted book list:', sortedBooks);
+
+     setLoading(false);
   };
 
-  const delateBook = async () => {
+  const deleteBook = async () => {
     setLoading(true);
-    const bookData = await delateBookById(bookId);
-    getUserList();
+    const bookData = await deleteBookById(bookId);
+    getBookList();
     setOpen(false);
-    FormControl;
   };
 
   useEffect(() => {
-    getUserList();
+    getBookList();
   }, [selectedAuthor, sortByTitle, sortByPages]);
 
   const setSortByTitleFn = () => {
-    
     setSortByTitle(sortByTitle === 'asc' ? 'desc' : 'asc');
   };
 
-  const setSortByPagesFn = () => {
-     
+  const setSortByPagesFn = () => { 
     setSortByPages(sortByPages === 'asc' ? 'desc' : 'asc');
   };
   const [open, setOpen] = React.useState(false);
@@ -210,7 +213,6 @@ function Home() {
           </FormControl>
         </Box>
       </AppBar>
-
       <Main open={open}>
         <DrawerHeader sx={{ backgroundColor: 'white' }} />
         {loading ? (
@@ -225,14 +227,14 @@ function Home() {
                   <TableCell align="left" sx={{ boxShadow: 'none' }}></TableCell>
                   <TableCell align="left">
                     <Button onClick={setSortByTitleFn} type="button">
-                      Title {(sortByTitle == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
+                      Title {sortByTitle == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                     </Button>
                   </TableCell>
                   <TableCell align="left">Author</TableCell>
                   <TableCell align="left">Year</TableCell>
                   <TableCell align="left">
                     <Button onClick={setSortByPagesFn} type="button">
-                      Pages{(sortByPages == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
+                      Pages{sortByPages == 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                     </Button>
                   </TableCell>
                   <TableCell align="left">Quantity</TableCell>
@@ -240,7 +242,7 @@ function Home() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {userList
+                {bookList
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow
@@ -276,9 +278,8 @@ function Home() {
           </TableContainer>
         )}
         <TablePagination
-          rowsPerPageOptions={[10, 25]}
           component="div"
-          count={10}
+          count={30}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -306,7 +307,7 @@ function Home() {
             />
           </Button>
           <Button
-            onClick={delateBook}
+            onClick={deleteBook}
             sx={{ backgroundColor: 'transparent', color: 'white', marginTop: '1vh' }}>
             <DeleteIcon />
           </Button>

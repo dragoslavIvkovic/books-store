@@ -17,7 +17,10 @@ function SelectedBookPage() {
   };
 
   useEffect(() => {
-    getBookByIdData();
+    if (bookId !== null) {
+      getBookByIdData()
+    }
+    
   }, [bookId]);
 
   return (
